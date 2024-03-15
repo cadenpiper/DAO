@@ -4,6 +4,7 @@ import { ethers } from 'ethers'
 
 // Components
 import Navigation from './Navigation';
+import Proposals from './Proposals';
 import Loading from './Loading';
 
 // ABIs: Import your contract ABIs here
@@ -13,15 +14,21 @@ import DAO_ABI from '../abis/DAO.json'
 import config from '../config.json';
 
 function App() {
-  const [account, setAccount] = useState(null)
+  const [provider, setProvider] = useState(null)
   const [dao, setDao] = useState(null)
   const [treasuryBalance, setTreasuryBalance] = useState(0)
+
+  const [account, setAccount] = useState(null)
+
+  const [proposals, setProposals] = useState(null)
+  const [quorum, setQuorum] = useState(null)
 
   const [isLoading, setIsLoading] = useState(true)
 
   const loadBlockchainData = async () => {
     // Initiate provider
     const provider = new ethers.providers.Web3Provider(window.ethereum)
+    setProvider(provider)
 
     // Initiate contracts
     const dao = new ethers.Contract(config[31337].dao.address, DAO_ABI, provider)
@@ -37,7 +44,19 @@ function App() {
     const account = ethers.utils.getAddress(accounts[0])
     setAccount(account)
 
-    
+    const count = await dao.proposalCount()
+    const items = []
+
+    for(var i = 0; i < count; i++) {
+      // Fetch proposals
+      const proposal = await dao.proposals(i + 1)
+      items.push(proposal)
+    }
+
+    setProposals(items)
+
+    // Fetch quorum
+    setQuorum(await dao.quorum())
 
     setIsLoading(false)
   }
@@ -63,6 +82,14 @@ function App() {
         <p className='text-center'><strong>Treasury Balance:</strong> {treasuryBalance} ETH</p>
 
         <hr/>
+
+        <Proposals
+          provider={provider}
+          dao={dao}
+          proposals={proposals}
+          quorum={quorum}
+          setIsLoading={setIsLoading}
+          />
         </>
       )}
     </Container>
