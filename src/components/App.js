@@ -4,6 +4,7 @@ import { ethers } from 'ethers'
 
 // Components
 import Navigation from './Navigation';
+import Create from './Create';
 import Proposals from './Proposals';
 import Loading from './Loading';
 
@@ -44,11 +45,11 @@ function App() {
     const account = ethers.utils.getAddress(accounts[0])
     setAccount(account)
 
+    // Fetch proposals count
     const count = await dao.proposalCount()
     const items = []
 
     for(var i = 0; i < count; i++) {
-      // Fetch proposals
       const proposal = await dao.proposals(i + 1)
       items.push(proposal)
     }
@@ -77,18 +78,24 @@ function App() {
         <Loading />
       ) : (
         <>
-        <hr/>
+          <Create
+            provider={provider}
+            dao={dao}
+            setIsLoading={setIsLoading}
+          />
 
-        <p className='text-center'><strong>Treasury Balance:</strong> {treasuryBalance} ETH</p>
+          <hr/>
 
-        <hr/>
+          <p className='text-center'><strong>Treasury Balance:</strong> {treasuryBalance} ETH</p>
 
-        <Proposals
-          provider={provider}
-          dao={dao}
-          proposals={proposals}
-          quorum={quorum}
-          setIsLoading={setIsLoading}
+          <hr/>
+
+          <Proposals
+            provider={provider}
+            dao={dao}
+            proposals={proposals}
+            quorum={quorum}
+            setIsLoading={setIsLoading}
           />
         </>
       )}
