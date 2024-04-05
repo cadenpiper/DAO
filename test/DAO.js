@@ -66,10 +66,12 @@ describe('DAO', () => {
   describe('Proposal Creation', () => {   
     let transaction, result
 
+    const message = "This is a proposal"
+
     describe('Success', () => {
       
       beforeEach(async () => {
-        transaction = await dao.connect(investor1).createProposal('Proposal 1', ether(100), recipient.address)
+        transaction = await dao.connect(investor1).createProposal('Proposal 1', ether(100), recipient.address, message)
         result = await transaction.wait()
       })
 
@@ -85,18 +87,18 @@ describe('DAO', () => {
       })
 
       it('emits a Propose event', async () => {
-        await expect(transaction).to.emit(dao, 'Propose').withArgs(1, ether(100), recipient.address, investor1.address)
+        await expect(transaction).to.emit(dao, 'Propose').withArgs(1, ether(100), recipient.address, investor1.address, message)
       })
     })
 
     describe('Failure', () => {
 
       it('rejects invalid amount', async () => {
-        await expect(dao.connect(investor1).createProposal('Proposal 1', ether(1000), recipient.address)).to.be.reverted
+        await expect(dao.connect(investor1).createProposal('Proposal 1', ether(1000), recipient.address, message)).to.be.reverted
       })
 
       it('rejects a non-investor', async () => {
-        await expect(dao.connect(user).createProposal('Proposal 1', ether(100), recipient.address)).to.be.reverted
+        await expect(dao.connect(user).createProposal('Proposal 1', ether(100), recipient.address, message)).to.be.reverted
       })
     })
   })
@@ -104,8 +106,10 @@ describe('DAO', () => {
   describe('Voting', () => {
     let transaction, result
 
+    const message = "This is a proposal"
+
     beforeEach(async () => {
-      transaction = await dao.connect(investor1).createProposal('Proposal 1', ether(100), recipient.address)
+      transaction = await dao.connect(investor1).createProposal('Proposal 1', ether(100), recipient.address, message)
       result = await transaction.wait()
     })
 
@@ -156,10 +160,12 @@ describe('DAO', () => {
   describe('Governance', () => {
     let transaction, result
 
+    const message = "This is a proposal"
+
     describe('Success', () => {
 
       beforeEach(async () => {
-        transaction = await dao.connect(investor1).createProposal('Proposal 1', ether(100), recipient.address)
+        transaction = await dao.connect(investor1).createProposal('Proposal 1', ether(100), recipient.address, message)
         result = await transaction.wait()
 
         transaction = await dao.connect(investor1).vote(1)
@@ -192,7 +198,7 @@ describe('DAO', () => {
     describe('Failure', () => {
 
       beforeEach(async () => {
-        transaction = await dao.connect(investor1).createProposal('Proposal 1', ether(100), recipient.address)
+        transaction = await dao.connect(investor1).createProposal('Proposal 1', ether(100), recipient.address, message)
         result = await transaction.wait()
 
         transaction = await dao.connect(investor1).vote(1)

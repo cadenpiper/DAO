@@ -27,7 +27,8 @@ contract DAO {
         uint id,
         uint256 amount,
         address recipient,
-        address creator
+        address creator,
+        string description
     );
     event Vote(uint256 id, address investor);
     event Downvote(uint256 id, address investor);
@@ -54,9 +55,11 @@ contract DAO {
     function createProposal(
         string memory _name,
         uint256 _amount,
-        address payable _recipient
+        address payable _recipient,
+        string memory _description
     ) external onlyInvestor {
         require(address(this).balance >= _amount);
+        require(bytes(_description).length > 0, "Description must not be empty");
 
         proposalCount++;
 
@@ -73,7 +76,8 @@ contract DAO {
             proposalCount,
             _amount,
             _recipient,
-            msg.sender
+            msg.sender,
+            _description
         );
     }
 
