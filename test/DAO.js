@@ -114,15 +114,27 @@ describe('DAO', () => {
       beforeEach(async () => {
         transaction = await dao.connect(investor1).vote(1)
         result = await transaction.wait()
+
+        transaction1 = await dao.connect(investor2).downvote(1)
+        result = await transaction.wait()
       })
 
       it('updates vote count', async () => {
         const proposal = await dao.proposals(1)
-        expect(proposal.votes).to.equal(tokens(200000))
+        expect(proposal.votes).to.equal(tokens(0))
       })
 
       it('emits a Vote event', async () => {
         await expect(transaction).to.emit(dao, "Vote").withArgs(1, investor1.address)
+      })
+
+      it('updates downvote count', async () => {
+        const proposal = await dao.proposals(1)
+        expect(proposal.votes).to.equal(0)
+      })
+
+      it('emits a Downvote event', async () => {
+        await expect(transaction1).to.emit(dao, "Downvote").withArgs(1, investor2.address)
       })
     })
 
