@@ -8,6 +8,7 @@ const Create = ({ provider, dao, setIsLoading }) => {
   const [name, setName] = useState('')
   const [amount, setAmount] = useState(0)
   const [address, setAddress] = useState('')
+  const [description, setDescription] = useState('')
   const [isWaiting, setIsWaiting] = useState(false)
 
   const createHandler = async (e) => {
@@ -18,7 +19,7 @@ const Create = ({ provider, dao, setIsLoading }) => {
       const signer = await provider.getSigner()
       const formattedAmount = ethers.utils.parseUnits(amount.toString(), 'ether')
 
-      const transaction = await dao.connect(signer).createProposal(name, formattedAmount, address)
+      const transaction = await dao.connect(signer).createProposal(name, formattedAmount, address, description)
       await transaction.wait()
     } catch {
       window.alert('User rejected or transaction reverted')
@@ -47,6 +48,12 @@ const Create = ({ provider, dao, setIsLoading }) => {
           placeholder='Enter address'
           className='my-2'
           onChange={(e) => setAddress(e.target.value)}
+        />
+        <Form.Control
+          type='text'
+          placeholder='Enter description'
+          className='my-2'
+          onChange={(e) => setDescription(e.target.value)}
         />
         {isWaiting ? (
           <Spinner animation="border" style={{ display: 'block', margin: '0 auto' }} />

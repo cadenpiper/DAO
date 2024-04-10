@@ -73,6 +73,12 @@
           "internalType": "address",
           "name": "creator",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
         }
       ],
       "name": "Propose",
@@ -113,6 +119,11 @@
           "internalType": "address payable",
           "name": "_recipient",
           "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_description",
+          "type": "string"
         }
       ],
       "name": "createProposal",
